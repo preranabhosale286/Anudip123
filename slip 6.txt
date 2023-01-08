@@ -1,0 +1,85 @@
+Write a program to merge two sets of integers and calculate sum of all
+integers in the merged set. Also display largest and smallest element
+from merged set.
+(Merge : 10M sum :5M largest :5M smallest :5 M display : 5M)
+
+SOLUTION:
+
+object set{
+def main(args:Array[String]){
+ var s1=Set(1,2,3,4,5)
+var s2=Set(5,7,8,9)
+s1++s2
+println(s1)
+println("sum:"+s1.sum)
+println("max:"+s1.max)
+println("min:"+s1.min)
+
+Slip 6 neo4j 
+Model the following Hotels information as a graph model, and answer the following queries using Cypher.
+Consider hotels in Pune. Some hotels provide lodging facility whereas some provide only restaurant facility and some provide both. 
+A person can rate(1-5 stars) a hotel for its facility/facilities. 
+A person can recommend a hotel to his/her friends. 
+A person can provide a review for a hotel after his stay/visit.
+
+1.	Identify the labels and relationships, along with their properties, and draw Graph model.
+2.	Create nodes and relationships, along with their properties, and visualize your actual Graph model. 
+3.	Answer the Queries.
+a.	List the names of hotels in Camp area. 
+b.	List the names of hotels having both lodging and restaurant facility. 
+c.	List the names of hotels with high rating (>=4).
+d.	List the most recommended hotels in Koregaon Park area. 
+
+
+create(surbhi:Hotel{name:'Surbhi Hotel',area:'Pune'}) 
+create(darpan:Hotel{name:'Darpan Hotel',area:'Koregaon Park'}) 
+create(geeta:Hotel{name:'Geeta Hotel',area:'Pimpri'}) 
+create(royal:Hotel{name:'Royal Hotel',area:'Koregaon Park'}) 
+create(yash:Hotel{name:'Yash Palace Hotel',area:'Camp'}) 
+create(rajesh:Hotel{name:'Rajesh Hotel',area:'Camp'})
+
+create(lodging:Facility{f_type:'Lodging'}) 
+create(restaurant:Facility{f_type:'Restaurant'})
+
+create(surbhi)-[:provide_facility]->(lodging) 
+create(surbhi)-[:provide_facility]->(restaurant) 
+create(darpan)-[:provide_facility]->(lodging) 
+create(geeta)-[:provide_facility]->(restaurant) 
+create(royal)-[:provide_facility]->(lodging) 
+create(royal)-[:provide_facility]->(restaurant) 
+create(yash)-[:provide_facility]->(lodging) 
+create(rajesh)-[:provide_facility]->(restaurant)
+
+create(ram:Person{name:'Ram'}) 
+create(sham:Person{name:'Sham'}) 
+create(raj:Person{name:'Raj'}) 
+create(ravi:Person{name:'Ravi'})
+
+create(ram)-[:recommend {rating:5}]->(royal) 
+create(sham)-[:recommend {rating:3}]->(darpan) 
+create(raj)-[:recommend {rating:4}]->(royal) 
+create(ravi)-[:recommend {rating:4}]->(surbhi)
+
+create(ram)-[:reviews {review:'good restaurant'}]->(royal) 
+create(sham)-[:reviews {review:'best option for lodging in koregaon'}]->(darpan) 
+
+Solution for the queries
+
+a. List the names of hotels in Camp area.
+match(h:Hotel{area:'Camp'}) 
+return h.name
+
+b. List the names of hotels having both lodging and restaurant facility.
+match(h1:Hotel)-[:provide_facility]->(f1:Facility{f_type:'Lodging'}),(h2:Hotel)-[:provide_facility]->(f2:Facility{f_type:'Restaurant'})
+where h1.name=h2.name 
+return h1.name
+
+c. List the names of hotels with high rating (>=4).
+match(p:Person)-[r:recommend]->(h:Hotel) 
+where r.rating>=4 
+return distinct h.name
+
+d. List the most recommended hotels in Koregaon Park area. 
+match(p:Person)-[r:recommend]->(h:Hotel{area:'Koregaon Park'}) 
+return h.name,count(*) 
+order by count(*) desc limit 1
