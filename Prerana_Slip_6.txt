@@ -1,0 +1,84 @@
+object Slip6 {
+ def main(args:Array[String])
+ {   
+var s1=Set(1,2,3,4,5,6)
+var s2=Set(4,5,6,7,8)
+s1++s2
+println(s1)
+println("sum:"+s1.sum)
+println("max:"+s1.max)
+println("min:"+s1.min)
+ }
+}
+
+
+Node Creation : Hotel
+Create (:Hotel{name:"New Poona Cafe",address:"Camp"})
+Create (:Hotel{name:"Modern  Cafe",address:"Camp"})
+Create (:Hotel{name:"Prime Hotel",address:"Koregaon Park"})
+Create (:Hotel{name:"Poonam Hotel",address:"Deccan"})
+
+Node Creation : Facility
+Create (f:Facility{name:"Lodging"})
+Create (f:Facility{name:"Restaurant"})
+
+Relationship creation : Provides 
+1)	Match(h:Hotel),(f:Facility)
+Where h.name="New Poona Cafe" and f.name="Lodging"
+Create (h)-[:provides]->(f) return h,f
+2)	Match(h:Hotel),(f:Facility)
+Where h.name=" New Poona Cafe" and f.name=" Restaurant"
+Create (h)-[:provides]->(f) return h,f
+3)	Match(h:Hotel),(f:Facility)
+Where h.name="Modern Cafe" and f.name=" Restaurant"
+Create (h)-[:provides]->(f) return h,f
+4)	Match(h:Hotel),(f:Facility)
+Where h.name=”Poonam Hotel” and f.name=” Restaurant”
+Create (h)-[:provides]->(f) return h,f
+5)	Match(h:Hotel),(f:Facility)
+Where h.name=”Prime Hotel” and f.name=” Lodging”
+Create (h)-[:provides]->(f) return h,f
+
+
+Create Node : Person 
+Create (:Person{name :”Deepali”})
+Create (:Person{name :”Prakash”})
+Create (:Person{name :”Shreya”})
+Create (:Person{name :”Meenal”})
+Create (:Person{name :”Pallawi”})
+
+Relationship Creation : recommend
+6)	Match(p:Person),(h:Hotel)
+Where p.name=”Deepali” and h.name=” New Poona Cafe”
+Create (p)-[: recommend]->(h) return p,h
+7)	Match(p:Person),(h:Hotel)
+Where p.name=”Pallawi” and h.name=” New Poona Cafe”
+Create (p)-[: recommend]->(h) return p,h
+8)	Match(p:Person),(h:Hotel)
+Where p.name=”Meenal” and h.name=” New Poona Cafe”
+Create (p)-[: recommend]->(h) return p,h
+
+Relationship Creation : rate/review
+9)	Match(p:Person),(h:Hotel)
+Where p.name=”Shreya” and h.name=” New Poona Cafe”
+Create (p)-[: review{rate:4}]->(h) return p,h
+10)	Match(p:Person),(h:Hotel)
+Where p.name=”Prakash” and h.name=” Modern Cafe”
+Create (p)-[: review{rate:5}]->(h) return p,h
+11)	Match(p:Person),(h:Hotel)
+Where p.name=”Meenal” and h.name=” New Poona Cafe”
+Create (p)-[: review{rate:2}]->(h) return p,h
+
+
+Queries 
+1)	Match (h:Hotel) where h.address=”Camp” return h.name;
+2)	Match(f:Facility{name:”Lodging”})—(n:Hotel)—(f:Facility{name:”Restaurant”})return n.name
+3)	Match (Person)-[v:review]->(h:hotel	) where v.rate >3 return distinct Hotel.name
+4)	Match(Person)-[:recommend]->(h:Hotel)
+Where  h.address=”Camp” with h.name as names
+Count(h.name) as count_vt
+WITH collect({names:names,count_vt:count_vt}) as rows, max(count_vt) as max
+UNWIND[row in rows where row.count_vt=max]as row
+Return row.names as names , row.count_vt as count_vt
+
+
